@@ -15,22 +15,6 @@ with open("labels.pickle",'rb') as f:
 
 cap = cv2.VideoCapture(0)
 
-def transparentOverlay(src, overlay, pos=(0, 0), scale=1):
-    overlay = cv2.resize(overlay, (0, 0), fx=scale, fy=scale)
-    h, w, _ = overlay.shape  # Size of foreground
-    rows, cols, _ = src.shape  # Size of background Image
-    y, x = pos[0], pos[1]  # Position of foreground/overlay image
- 
-    # loop over all pixels and apply the blending equation
-    for i in range(h):
-        for j in range(w):
-            if x + i >= rows or y + j >= cols:
-                continue
-            alpha = float(overlay[i][j][3] / 255.0)  # read the alpha channel
-            src[x + i][y + j] = alpha * overlay[i][j][:3] + (1 - alpha) * src[x + i][y + j]
-    return src
- 
-
 while(True):
     
     ret, frame = cap.read()
@@ -51,17 +35,7 @@ while(True):
             name = labels[id_]
             color= (255,255,255)
             stroke = 2
-            cv2.putText(frame, name, (x,y),font,1,color,stroke,cv2.LINE_AA)
-            if id_==1:
-                #POOPERSONIA
-                if h > 0 and w > 0:
-                    poop_symin = int(y +1 * h / 4)
-                    poop_symax = int(y + 5.5 * h / 6)
-                    sh_poop = poop_symax - poop_symin 
-                    face_poop_roi_color = frame[poop_symin:poop_symax,x:x+w]
-                    poopidy = cv2.resize(poop, (w, sh_poop),interpolation=cv2.INTER_CUBIC)
-                    transparentOverlay(face_poop_roi_color,poopidy) 
-                
+            cv2.putText(frame, name, (x,y),font,1,color,stroke,cv2.LINE_AA)             
 
         img_item = "7.png"
         cv2.imwrite(img_item, roi_color)
